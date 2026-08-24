@@ -1,2 +1,33 @@
-/* Base reset is provided by App.css (imported from the original site stylesheet). */
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans text-[#292222] bg-[#fbf8f2] leading-[1.65] antialiased;
+  }
+}
+
+/* Utilities that rely on complex gradients / patterns not practical inline */
+@layer utilities {
+  .hero-bg {
+    background: radial-gradient(circle at 78% 40%, #8e2f3c 0, #681e2c 28%, #47151f 70%, #321017 100%);
+  }
+  .hero-dots {
+    background-image: radial-gradient(circle, #f3d28b 1px, transparent 1px);
+    background-size: 26px 26px;
+  }
+  .divider-line {
+    background: linear-gradient(to right, transparent, #e2e8f0, transparent);
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
