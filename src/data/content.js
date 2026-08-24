@@ -370,6 +370,11 @@ export const DOCUMENTS_SECTION = {
       title: "পূজা কমিটির ঠিকানার প্রমাণ",
       hint: "PDF, JPG, PNG • সর্বোচ্চ 5 MB",
     },
+    {
+      id: "doc4",
+      title: "পেমেন্টের স্ক্রিনশট / প্রমান",
+      hint: "PDF, JPG, PNG • সর্বোচ্চ 5 MB",
+    },
   ],
   photo: {
     title: "পূজার ছবি",
