@@ -23,7 +23,7 @@ export const HERO = {
   titleLead: "শারদ",
   titleEm: "সম্মান",
   titleYear: "২০২৬",
-  subtitle: "দুর্গাপূজা সম্মাননা ২০২৬-এর জন্য অনলাইন আবেদন",
+  subtitle: "শারদ সম্মান ২০২৬ -এর জন্য অনলাইন আবেদন",
   text: "এবার শারদ সম্মানের আবেদন হোক আরও সহজ, দ্রুত ও ডিজিটাল। আপনার পূজা কমিটির তথ্য, পূজার বিবরণ ও প্রয়োজনীয় নথি জমা দিয়ে অংশগ্রহণ করুন।",
   primaryCta: "আবেদন শুরু করুন",
   ghostCta: "আবেদনের প্রক্রিয়া দেখুন",
@@ -46,7 +46,7 @@ export const PROCESS = {
       num: "০১",
       icon: "✎",
       title: "তথ্য পূরণ করুন",
-      desc: "পূজা কমিটি ও আবেদনকারীর প্রয়োজনীয় তথ্য দিন।",
+      desc: "পূজা কমিটির প্রয়োজনীয় তথ্য দিন।",
     },
     {
       num: "০২",
@@ -107,21 +107,22 @@ export const COMMITTEE_SECTION = {
     },
     {
       name: "venue",
-      label: "পূজার স্থান / মণ্ডপের নাম",
+      label: "ক্লাব / মণ্ডপের নাম",
       required: true,
-      placeholder: "মণ্ডপের নাম",
+      placeholder: "যেমন: দেশবন্ধু সংঘ",
     },
     {
       name: "established",
-      label: "প্রতিষ্ঠার বছর",
+      label: "পূজার বয়স",
+      required: true,
       type: "number",
       min: 1800,
       max: 2026,
-      placeholder: "যেমন: ১৯৯৮",
+      placeholder: "যেমন: ৫২ তম",
     },
     {
       name: "clubAddress",
-      label: "সম্পূর্ণ ঠিকানা",
+      label: "পূজা মণ্ডপের সম্পূর্ণ ঠিকানা",
       required: true,
       full: true,
       type: "textarea",
@@ -132,7 +133,7 @@ export const COMMITTEE_SECTION = {
       name: "district",
       label: "জেলা",
       required: true,
-      placeholder: "জেলার নাম",
+      placeholder: "যেমনঃ মালদা",
     },
     {
       name: "block",
@@ -205,13 +206,13 @@ export const APPLICANT_SECTION = {
     {
       name: "whatsapp",
       label: "WhatsApp নম্বর",
+      required: true,
       inputMode: "numeric",
       placeholder: "WhatsApp নম্বর",
     },
     {
       name: "email",
       label: "Email Address",
-      required: true,
       type: "email",
       placeholder: "example@email.com",
     },
@@ -220,14 +221,6 @@ export const APPLICANT_SECTION = {
       label: "বিকল্প যোগাযোগ নম্বর",
       inputMode: "numeric",
       placeholder: "বিকল্প নম্বর",
-    },
-    {
-      name: "contactAddress",
-      label: "যোগাযোগের ঠিকানা",
-      full: true,
-      type: "textarea",
-      rows: 3,
-      placeholder: "বর্তমান যোগাযোগের ঠিকানা",
     },
   ],
 };
@@ -242,18 +235,6 @@ export const PUJA_SECTION = {
       label: "পূজার বছর",
       disabled: true,
       defaultValue: "২০২৬",
-    },
-    {
-      name: "startDate",
-      label: "পূজা শুরুর তারিখ",
-      required: true,
-      type: "date",
-    },
-    {
-      name: "endDate",
-      label: "পূজা শেষের তারিখ",
-      required: true,
-      type: "date",
     },
     {
       name: "idolType",
@@ -357,12 +338,7 @@ export const DOCUMENTS_SECTION = {
   docs: [
     {
       id: "doc1",
-      title: "পূজা কমিটির অনুমোদন / পরিচয়পত্র",
-      hint: "PDF, JPG, PNG • সর্বোচ্চ 5 MB",
-    },
-    {
-      id: "doc2",
-      title: "আবেদনকারীর পরিচয়পত্র",
+      title: "পূজা কমিটির অনুমোদন পত্র",
       hint: "PDF, JPG, PNG • সর্বোচ্চ 5 MB",
     },
     {
@@ -408,8 +384,8 @@ export const FOOTER = {
   tagline: "ডিজিটাল আবেদন ও তথ্য ব্যবস্থাপনা",
   contactTitle: "যোগাযোগ",
   contact: [
-    "মোবাইল: +91 XXXXX XXXXX",
-    "ইমেল: example@sayandigital.com",
+    "মোবাইল: +91 77976 07126",
+    "ইমেল: sayandigital.malda@gmail.com",
     "ঠিকানা: Sayan Digital-এর ঠিকানা",
   ],
   importantTitle: "গুরুত্বপূর্ণ",
@@ -419,4 +395,5 @@ export const FOOTER = {
     { href: "#application", label: "অনলাইন আবেদন" },
   ],
   copyright: "© ২০২৬ Sayan Digital. All Rights Reserved.",
+  developerPortfolio: "https://sumancodes.netlify.app",
 };

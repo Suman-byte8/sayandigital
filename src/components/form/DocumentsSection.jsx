@@ -4,7 +4,7 @@ import PhotoUpload from './PhotoUpload.jsx'
 
 const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
 
-function UploadRow({ doc }) {
+function UploadRow({ doc, onFile }) {
   const [status, setStatus] = useState({ text: 'কোনও ফাইল নির্বাচিত নয়', ok: null })
 
   const handleFile = (e) => {
@@ -13,9 +13,11 @@ function UploadRow({ doc }) {
     if (file.size > MAX_SIZE) {
       e.target.value = ''
       setStatus({ text: 'ফাইলের আকার 5 MB-এর বেশি।', ok: false })
+      onFile(null) // clear any previously hoisted selection
       return
     }
     setStatus({ text: file.name, ok: true })
+    onFile(file)
   }
 
   const statusColor =
@@ -38,7 +40,7 @@ function UploadRow({ doc }) {
   )
 }
 
-export default function DocumentsSection() {
+export default function DocumentsSection({ onDocFile, onPhotosChange }) {
   const s = DOCUMENTS_SECTION
   return (
     <div id="documents" className="p-[42px] border-b border-[#eee5de] max-[560px]:px-[18px] max-[560px]:py-[27px]">
@@ -54,11 +56,11 @@ export default function DocumentsSection() {
 
       <div className="flex flex-col gap-2.5">
         {s.docs.map((doc) => (
-          <UploadRow key={doc.id} doc={doc} />
+          <UploadRow key={doc.id} doc={doc} onFile={(file) => onDocFile(doc.id, file)} />
         ))}
       </div>
 
-      <PhotoUpload />
+      <PhotoUpload onChange={onPhotosChange} />
     </div>
   )
 }

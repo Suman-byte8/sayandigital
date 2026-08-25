@@ -73,6 +73,12 @@ export default function Field({ field, value, error, onChange }) {
           }`}
         />
       )}
+
+      {error && (
+        <small className="text-[11px] text-[#b13b46]">
+          {typeof error === 'string' ? error : 'এই ঘরটি পূরণ করুন।'}
+        </small>
+      )}
     </label>
   )
 }

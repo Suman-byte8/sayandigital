@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   COMMITTEE_SECTION,
   APPLICANT_SECTION,
   PUJA_SECTION,
 } from '../../data/content.js'
 import { useApplicationForm } from '../../hooks/useApplicationForm.js'
-import { generateApplicationId, printAcknowledgement } from '../../utils/helpers.js'
+import { printAcknowledgement } from '../../utils/helpers.js'
+import { submitForm } from '../../lib/forms.js'
 
 import ProgressBar from './ProgressBar.jsx'
 import FormSection from './FormSection.jsx'
@@ -15,12 +16,25 @@ import Declaration from './Declaration.jsx'
 import ReviewModal from '../modals/ReviewModal.jsx'
 import SuccessModal from '../modals/SuccessModal.jsx'
 
+// Must match the FORMS key in Code.gs
+const FORM_TYPE = 'application'
+
 export default function ApplicationForm() {
   const form = useApplicationForm()
   const [agreed, setAgreed] = useState(false)
+  const [website, setWebsite] = useState('') // honeypot — real users never fill this
   const [reviewOpen, setReviewOpen] = useState(false)
   const [successOpen, setSuccessOpen] = useState(false)
-  const [applicationId, setApplicationId] = useState('SS2026-000000')
+  const [applicationId, setApplicationId] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [docFiles, setDocFiles] = useState({}) // { doc1..doc4: File | null }
+  const [photos, setPhotos] = useState([]) // File[]
+  const [formKey, setFormKey] = useState(0) // bump to remount <form> & clear native file inputs
+  const formRef = useRef(null)
+
+  const handleDocFile = (docId, file) =>
+    setDocFiles((prev) => ({ ...prev, [docId]: file }))
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -30,13 +44,54 @@ export default function ApplicationForm() {
       firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return
     }
+    setSubmitError('')
     setReviewOpen(true)
   }
 
-  const handleConfirm = () => {
-    setApplicationId(generateApplicationId())
-    setReviewOpen(false)
-    setSuccessOpen(true)
+  const handleConfirm = async () => {
+    if (submitting) return
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      // Gather hoisted files: doc1..doc4 + photo[]
+      const files = {}
+      Object.entries(docFiles).forEach(([field, file]) => {
+        if (file) files[field] = file
+      })
+      if (photos.length > 0) files.photo = photos
+
+      const result = await submitForm(
+        FORM_TYPE,
+        { ...form.values, awards: form.awards, website },
+        files
+      )
+
+      if (!result.ok) {
+        setSubmitError(result.error || 'আবেদন জমা হয়নি। অনুগ্রহ করে আবার চেষ্টা করুন।')
+        return
+      }
+
+      setApplicationId(result.id)
+      setReviewOpen(false)
+      setSuccessOpen(true)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleCloseSuccess = () => {
+    setSuccessOpen(false)
+    // Full reset: hook state + consent + honeypot + hoisted files,
+    // and a remount so the uncontrolled file inputs clear as well.
+    form.reset()
+    setAgreed(false)
+    setWebsite('')
+    setDocFiles({})
+    setPhotos([])
+    setApplicationId('')
+    setSubmitError('')
+    formRef.current?.reset()
+    setFormKey((k) => k + 1)
   }
 
   const handlePrint = () => {
@@ -53,7 +108,18 @@ export default function ApplicationForm() {
       <div className="bg-white border border-[#e7ddd4] rounded-[18px] shadow-[0_20px_70px_#4820170c] overflow-hidden">
         <ProgressBar pct={form.progress.pct} stepIndex={form.progress.stepIndex} />
 
-        <form onSubmit={handleSubmit} noValidate>
+        <form key={formKey} ref={formRef} onSubmit={handleSubmit} noValidate>
+          {/* Honeypot — visually hidden; bots fill it, humans never see it */}
+          <input
+            type="text"
+            name="website"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+            className="absolute -left-[9999px]"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+          />
           <FormSection
             section={COMMITTEE_SECTION}
             values={form.values}
@@ -77,7 +143,7 @@ export default function ApplicationForm() {
             error={form.awardsError}
             onToggle={form.toggleAward}
           />
-          <DocumentsSection />
+          <DocumentsSection onDocFile={handleDocFile} onPhotosChange={setPhotos} />
           <Declaration agreed={agreed} onAgreeChange={setAgreed} />
         </form>
       </div>
@@ -88,10 +154,12 @@ export default function ApplicationForm() {
         onConfirm={handleConfirm}
         getValue={form.getValue}
         awards={form.awards}
+        submitting={submitting}
+        error={submitError}
       />
       <SuccessModal
         open={successOpen}
-        onClose={() => setSuccessOpen(false)}
+        onClose={handleCloseSuccess}
         applicationId={applicationId}
         onPrint={handlePrint}
       />

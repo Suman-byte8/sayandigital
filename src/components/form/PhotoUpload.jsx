@@ -3,7 +3,7 @@ import { DOCUMENTS_SECTION } from '../../data/content.js'
 
 const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
 
-export default function PhotoUpload() {
+export default function PhotoUpload({ onChange }) {
   const { photo } = DOCUMENTS_SECTION
   const [photos, setPhotos] = useState([]) // [{ file, url }]
   const inputRef = useRef(null)
@@ -21,15 +21,17 @@ export default function PhotoUpload() {
       .slice(0, available)
       .filter((file) => file.size <= MAX_SIZE)
       .map((file) => ({ file, url: URL.createObjectURL(file) }))
-    setPhotos((prev) => [...prev, ...additions])
+    const next = [...photos, ...additions]
+    setPhotos(next)
+    onChange?.(next.map((p) => p.file))
     e.target.value = ''
   }
 
   const removeAt = (index) => {
-    setPhotos((prev) => {
-      URL.revokeObjectURL(prev[index].url)
-      return prev.filter((_, i) => i !== index)
-    })
+    URL.revokeObjectURL(photos[index].url)
+    const next = photos.filter((_, i) => i !== index)
+    setPhotos(next)
+    onChange?.(next.map((p) => p.file))
   }
 
   return (

@@ -16,12 +16,14 @@ export default function SuccessModal({ open, onClose, applicationId, onPrint }) 
         আপনার আবেদনটি সফলভাবে গ্রহণ করা হয়েছে। এই আবেদন নম্বরটি সংরক্ষণ করুন।
       </p>
 
-      <div className="bg-[#fff0dc] border border-[#e5c68f] rounded-[9px] p-[13px] my-[22px]">
-        <small className="block text-[#856c4f] text-[10px]">আপনার আবেদন নম্বর</small>
-        <strong className="font-mono font-bold text-[24px] tracking-[2px] text-[#752430]">
-          {applicationId}
-        </strong>
-      </div>
+      {applicationId && (
+        <div className="bg-[#fff0dc] border border-[#e5c68f] rounded-[9px] p-[13px] my-[22px]">
+          <small className="block text-[#856c4f] text-[10px]">আপনার আবেদন নম্বর</small>
+          <strong className="font-mono font-bold text-[24px] tracking-[2px] text-[#752430]">
+            {applicationId}
+          </strong>
+        </div>
+      )}
 
       <div className="flex justify-end gap-2.5 mt-5">
         <Button variant="ghost" onClick={onPrint}>

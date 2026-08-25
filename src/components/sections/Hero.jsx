@@ -41,9 +41,9 @@ export default function Hero() {
             <span className="w-9 h-px bg-[#d9b56a]" />
           </div>
 
-          <p className="text-[21px] font-medium text-[#e9c985] mb-2 max-[560px]:text-[17px]">
+          {/* <p className="text-[21px] font-medium text-[#e9c985] mb-2 max-[560px]:text-[17px]">
             {HERO.eyebrow}
-          </p>
+          </p> */}
 
           <h1 className="font-serif font-extrabold text-[clamp(60px,7vw,98px)] leading-[1.02] tracking-[-3px] m-0 text-[#fff5e4] max-[560px]:text-[57px]">
             {HERO.titleLead}{" "}
@@ -94,11 +94,6 @@ export default function Hero() {
             ✧
           </div>
           <div className="absolute top-[5%] bottom-[5%] left-1/2 border-l border-dashed border-[#dcb86e30]" />
-          <div className="absolute right-[5%] top-[14%] font-serif font-medium text-[25px] leading-[1.1] text-center text-[#e9c985]">
-            শারদ
-            <br />
-            <b className="text-[42px]">২০২৬</b>
-          </div>
         </div>
       </div>
     </section>

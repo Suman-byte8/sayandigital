@@ -2,7 +2,15 @@ import Modal from './Modal.jsx'
 import Button from '../ui/Button.jsx'
 import { REVIEW_LABELS } from '../../data/content.js'
 
-export default function ReviewModal({ open, onClose, onConfirm, getValue, awards }) {
+export default function ReviewModal({
+  open,
+  onClose,
+  onConfirm,
+  getValue,
+  awards,
+  submitting = false,
+  error = '',
+}) {
   const rows = REVIEW_LABELS.map(([name, label]) => [label, getValue(name)])
   rows.push(['সম্মান বিভাগ', awards.length ? awards.join(', ') : '—'])
 
@@ -26,12 +34,23 @@ export default function ReviewModal({ open, onClose, onConfirm, getValue, awards
         ))}
       </div>
 
+      {error && (
+        <p role="alert" className="text-[#b13b46] text-xs mt-4 text-right">
+          {error}
+        </p>
+      )}
+      {submitting && (
+        <p role="status" className="text-xs text-[#776a64] mt-4 text-right">
+          আপনার আবেদন জমা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন…
+        </p>
+      )}
+
       <div className="flex justify-end gap-2.5 mt-5">
-        <Button variant="ghost" onClick={onClose}>
+        <Button variant="ghost" onClick={onClose} disabled={submitting}>
           তথ্য পরিবর্তন করুন
         </Button>
-        <Button variant="primary" onClick={onConfirm}>
-          আবেদন জমা দিন
+        <Button variant="primary" onClick={onConfirm} disabled={submitting}>
+          {submitting ? 'পাঠানো হচ্ছে…' : 'আবেদন জমা দিন'}
         </Button>
       </div>
     </Modal>
