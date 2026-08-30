@@ -228,6 +228,14 @@ export default {
     galleryCloseImage: "ছবি বন্ধ করুন",
     languageSwitcher: { en: "EN", bn: "বাং", label: "ভাষা নির্বাচন করুন" },
 
+    previewBanner: {
+      title: "আবেদন এখনও শুরু হয়নি",
+      textNoDate:
+        "এটি আবেদন ফর্মের একটি প্রিভিউ মাত্র। আবেদন শীঘ্রই শুরু হবে — অনুগ্রহ করে পরে আবার দেখুন।",
+      textWithDate: (date) =>
+        `এটি আবেদন ফর্মের একটি প্রিভিউ মাত্র। ${date} থেকে আবেদন শুরু হবে।`,
+    },
+
     documents: {
       noFileSelected: "কোনও ফাইল নির্বাচিত নয়",
       fileTooLarge: "ফাইলের আকার 5 MB-এর বেশি।",

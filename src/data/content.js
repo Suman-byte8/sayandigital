@@ -35,3 +35,14 @@ function buildGalleryData() {
 export const GALLERY_DATA = buildGalleryData();
 
 export const DEVELOPER_PORTFOLIO_URL = "https://sumancodes.netlify.app";
+
+// Set to true to accept real submissions. While false, the application
+// form renders as a preview only — every field/checkbox/upload/submit
+// control is disabled and a notice banner is shown instead. Flip this
+// back to true (and redeploy) whenever applications should open.
+export const APPLICATIONS_OPEN = false;
+
+// Optional human-readable opening date shown in the preview banner,
+// e.g. "1 October 2026". Leave empty to show a generic "opening soon"
+// message instead.
+export const APPLICATIONS_OPEN_DATE = "";

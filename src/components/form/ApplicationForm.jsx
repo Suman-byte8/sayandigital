@@ -4,6 +4,7 @@ import { useApplicationForm } from '../../hooks/useApplicationForm.js'
 import { printAcknowledgement } from '../../utils/helpers.js'
 import { submitForm, createPaymentOrder, reportPaymentFailure } from '../../lib/forms.js'
 import { loadRazorpayScript, openRazorpayCheckout } from '../../lib/razorpay.js'
+import { APPLICATIONS_OPEN, APPLICATIONS_OPEN_DATE } from '../../data/content.js'
 
 import ProgressBar from './ProgressBar.jsx'
 import FormSection from './FormSection.jsx'
@@ -226,6 +227,22 @@ export default function ApplicationForm() {
 
   return (
     <>
+      {!APPLICATIONS_OPEN && (
+        <div className="w-full mb-6 bg-[#fdecee] border-2 border-[#a3444e] rounded-[12px] px-6 py-5 flex gap-4 items-start shadow-[0_10px_30px_#a3444e1f]">
+          <div className="bg-[#9f3744] text-white w-[38px] h-[38px] text-lg rounded-full grid place-items-center font-extrabold flex-none">
+            !
+          </div>
+          <div>
+            <strong className="text-lg text-[#7a1f2b] block">{t.ui.previewBanner.title}</strong>
+            <p className="mt-1 text-sm font-medium text-[#8e303b]">
+              {APPLICATIONS_OPEN_DATE
+                ? t.ui.previewBanner.textWithDate(APPLICATIONS_OPEN_DATE)
+                : t.ui.previewBanner.textNoDate}
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="bg-white border border-[#e7ddd4] rounded-[18px] shadow-[0_20px_70px_#4820170c] overflow-hidden">
         <ProgressBar pct={form.progress.pct} stepIndex={form.progress.stepIndex} />
 
@@ -241,31 +258,37 @@ export default function ApplicationForm() {
             autoComplete="off"
             aria-hidden="true"
           />
-          <FormSection
-            section={t.committeeSection}
-            values={form.values}
-            errors={form.errors}
-            onChange={form.setField}
-          />
-          <FormSection
-            section={t.applicantSection}
-            values={form.values}
-            errors={form.errors}
-            onChange={form.setField}
-          />
-          <FormSection
-            section={t.pujaSection}
-            values={form.values}
-            errors={form.errors}
-            onChange={form.setField}
-          />
-          <AwardsSection
-            selected={form.awards}
-            error={form.awardsError}
-            onToggle={form.toggleAward}
-          />
-          <DocumentsSection onDocFile={handleDocFile} />
-          <Declaration agreed={agreed} onAgreeChange={setAgreed} />
+          {/* While applications are closed, disabling the fieldset natively
+              disables every descendant control (inputs/selects/textareas/
+              checkboxes/file inputs/submit button) — the form renders as a
+              read-only preview and can't be submitted. */}
+          <fieldset disabled={!APPLICATIONS_OPEN} className="contents">
+            <FormSection
+              section={t.committeeSection}
+              values={form.values}
+              errors={form.errors}
+              onChange={form.setField}
+            />
+            <FormSection
+              section={t.applicantSection}
+              values={form.values}
+              errors={form.errors}
+              onChange={form.setField}
+            />
+            <FormSection
+              section={t.pujaSection}
+              values={form.values}
+              errors={form.errors}
+              onChange={form.setField}
+            />
+            <AwardsSection
+              selected={form.awards}
+              error={form.awardsError}
+              onToggle={form.toggleAward}
+            />
+            <DocumentsSection onDocFile={handleDocFile} />
+            <Declaration agreed={agreed} onAgreeChange={setAgreed} />
+          </fieldset>
         </form>
       </div>
 

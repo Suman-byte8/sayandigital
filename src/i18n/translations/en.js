@@ -227,6 +227,14 @@ export default {
     galleryCloseImage: "Close image",
     languageSwitcher: { en: "EN", bn: "বাং", label: "Select language" },
 
+    previewBanner: {
+      title: "Applications Are Not Open Yet",
+      textNoDate:
+        "This is a preview of the application form. Submissions will open soon — please check back later.",
+      textWithDate: (date) =>
+        `This is a preview of the application form. Submissions open on ${date}.`,
+    },
+
     documents: {
       noFileSelected: "No file selected",
       fileTooLarge: "File size exceeds 5 MB.",

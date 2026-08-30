@@ -3,7 +3,7 @@
 import { useTranslation } from '../../i18n/I18nContext.jsx'
 
 const inputBase =
-  'w-full border rounded-lg px-[13px] text-[15px] text-[#302927] bg-[#fffdfa] outline-none transition-all duration-200 focus:border-[#a3444e] focus:shadow-[0_0_0_3px_#a3444e10]'
+  'w-full border rounded-lg px-[13px] text-[15px] text-[#302927] bg-[#fffdfa] outline-none transition-all duration-200 focus:border-[#a3444e] focus:shadow-[0_0_0_3px_#a3444e10] disabled:opacity-70 disabled:cursor-not-allowed'
 
 export default function Field({ field, value, error, onChange }) {
   const { t } = useTranslation()
