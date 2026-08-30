@@ -1,5 +1,6 @@
 import Modal from './Modal.jsx'
 import Button from '../ui/Button.jsx'
+import Spinner from '../ui/Spinner.jsx'
 import { REVIEW_LABELS, APPLICATION_FEE } from '../../data/content.js'
 
 export default function ReviewModal({
@@ -38,18 +39,13 @@ export default function ReviewModal({
         পেমেন্ট সফল হলেই আবেদনটি জমা হবে।
       </p>
 
-      {submitting && (
-        <p role="status" className="text-xs text-[#776a64] mt-4 text-right">
-          পেমেন্ট প্রক্রিয়া চলছে, অনুগ্রহ করে অপেক্ষা করুন…
-        </p>
-      )}
-
       <div className="flex justify-end gap-2.5 mt-5">
         <Button variant="ghost" onClick={onClose} disabled={submitting}>
           তথ্য পরিবর্তন করুন
         </Button>
         <Button variant="primary" onClick={onConfirm} disabled={submitting}>
-          {submitting ? 'অপেক্ষা করুন…' : `₹${APPLICATION_FEE.amount} পেমেন্ট করে জমা দিন`}
+          {submitting && <Spinner className="w-4 h-4" color="#fff" />}
+          {submitting ? 'প্রস্তুত করা হচ্ছে…' : `₹${APPLICATION_FEE.amount} পেমেন্ট করে জমা দিন`}
         </Button>
       </div>
     </Modal>

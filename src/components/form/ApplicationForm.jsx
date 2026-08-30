@@ -15,6 +15,7 @@ import AwardsSection from './AwardsSection.jsx'
 import DocumentsSection from './DocumentsSection.jsx'
 import Declaration from './Declaration.jsx'
 import ReviewModal from '../modals/ReviewModal.jsx'
+import ProcessingModal from '../modals/ProcessingModal.jsx'
 import SuccessModal from '../modals/SuccessModal.jsx'
 import FailureModal from '../modals/FailureModal.jsx'
 
@@ -148,6 +149,13 @@ export default function ApplicationForm() {
       return
     }
 
+    // Hand off to Razorpay's own full-screen overlay right as it opens —
+    // everything behind it is invisible until it closes, so this is the
+    // right moment to swap away from the review table. On success this
+    // leaves ProcessingModal showing underneath while the application
+    // saves, instead of the review table flashing back into view.
+    setReviewOpen(false)
+
     openRazorpayCheckout({
       keyId: order.keyId,
       orderId: order.orderId,
@@ -163,12 +171,10 @@ export default function ApplicationForm() {
       onSuccess: (response) => finalizeSubmission(response),
       onDismiss: () => {
         setSubmitting(false)
-        setReviewOpen(false)
         setFailure({ message: 'পেমেন্ট সম্পন্ন হয়নি। অনুগ্রহ করে আবার চেষ্টা করুন।', retryable: true })
       },
       onFailure: (response) => {
         setSubmitting(false)
-        setReviewOpen(false)
         setFailure({
           message: `পেমেন্ট ব্যর্থ হয়েছে। ${response?.error?.description || 'অনুগ্রহ করে আবার চেষ্টা করুন।'}`,
           retryable: true,
@@ -260,6 +266,10 @@ export default function ApplicationForm() {
         awards={form.awards}
         submitting={submitting}
       />
+      {/* Bridges the gap between Razorpay's overlay closing and the
+          backend finishing the save — without it the review table would
+          flash back into view while files are still uploading. */}
+      <ProcessingModal open={submitting && !reviewOpen && !successOpen && !failure} />
       <SuccessModal
         open={successOpen}
         onClose={handleCloseSuccess}
