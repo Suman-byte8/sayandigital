@@ -16,6 +16,7 @@ import DocumentsSection from './DocumentsSection.jsx'
 import Declaration from './Declaration.jsx'
 import ReviewModal from '../modals/ReviewModal.jsx'
 import SuccessModal from '../modals/SuccessModal.jsx'
+import FailureModal from '../modals/FailureModal.jsx'
 
 // Must match the FORMS key in Code.gs
 const FORM_TYPE = 'application'
@@ -27,8 +28,12 @@ export default function ApplicationForm() {
   const [reviewOpen, setReviewOpen] = useState(false)
   const [successOpen, setSuccessOpen] = useState(false)
   const [applicationId, setApplicationId] = useState('')
+  const [paymentId, setPaymentId] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [submitError, setSubmitError] = useState('')
+  // failure.retryable is false only when a payment was actually charged
+  // and the save afterwards failed — never offer to "retry" that, it
+  // would risk charging the applicant a second time.
+  const [failure, setFailure] = useState(null) // { message, retryable, paymentId? } | null
   const [docFiles, setDocFiles] = useState({}) // { doc1, doc3: File | null }
   const [formKey, setFormKey] = useState(0) // bump to remount <form> & clear native file inputs
   const formRef = useRef(null)
@@ -36,21 +41,24 @@ export default function ApplicationForm() {
   const handleDocFile = (docId, file) =>
     setDocFiles((prev) => ({ ...prev, [docId]: file }))
 
+  // Scrolls straight to the exact field that failed — by name, not a
+  // brittle Tailwind error-border class — falling back to the awards
+  // section when the only problem is "no award category selected".
+  const scrollToError = (firstErrorField) => {
+    const target = firstErrorField
+      ? document.querySelector(`[name="${firstErrorField}"]`)
+      : document.getElementById('awards-section')
+    target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    target?.focus?.({ preventScroll: true })
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     const { ok, firstErrorField } = form.validate()
     if (!ok) {
-      // Scroll straight to the exact field that failed — by name, not a
-      // brittle Tailwind error-border class — falling back to the awards
-      // section when the only problem is "no award category selected".
-      const target = firstErrorField
-        ? document.querySelector(`[name="${firstErrorField}"]`)
-        : document.getElementById('awards-section')
-      target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      target?.focus?.({ preventScroll: true })
+      scrollToError(firstErrorField)
       return
     }
-    setSubmitError('')
     setReviewOpen(true)
   }
 
@@ -78,14 +86,22 @@ export default function ApplicationForm() {
       )
 
       if (!result.ok) {
-        setSubmitError(
-          result.error ||
-            'পেমেন্ট সফল হয়েছে কিন্তু আবেদন জমা হয়নি। অনুগ্রহ করে স্ক্রিনশট রেখে সাপোর্টে যোগাযোগ করুন।'
-        )
+        setReviewOpen(false)
+        // Money has already been charged at this point — never offer a
+        // retry (no onRetry), and surface the payment ID so support can
+        // find it.
+        setFailure({
+          message:
+            result.error ||
+            'পেমেন্ট সফল হয়েছে কিন্তু আবেদন জমা হয়নি। অনুগ্রহ করে নিচের রেফারেন্স নম্বরটি সংরক্ষণ করে সাপোর্টে যোগাযোগ করুন।',
+          retryable: false,
+          paymentId: payment.razorpay_payment_id,
+        })
         return
       }
 
       setApplicationId(result.id)
+      setPaymentId(payment.razorpay_payment_id)
       setReviewOpen(false)
       setSuccessOpen(true)
     } finally {
@@ -95,20 +111,40 @@ export default function ApplicationForm() {
 
   const handleConfirm = async () => {
     if (submitting) return
+
+    // Belt-and-braces: re-validate right before money changes hands. The
+    // form fields are unreachable while this modal is open so nothing
+    // should have changed since handleSubmit's check, but a payment that
+    // succeeds against an incomplete application is a real support
+    // headache — never open Razorpay Checkout on stale/bad state.
+    const { ok, firstErrorField } = form.validate()
+    if (!ok) {
+      setReviewOpen(false)
+      scrollToError(firstErrorField)
+      return
+    }
+
     setSubmitting(true)
-    setSubmitError('')
 
     const order = await createPaymentOrder()
     if (!order.ok) {
-      setSubmitError(order.error || 'পেমেন্ট শুরু করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।')
+      setReviewOpen(false)
       setSubmitting(false)
+      setFailure({
+        message: order.error || 'পেমেন্ট শুরু করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।',
+        retryable: true,
+      })
       return
     }
 
     const scriptLoaded = await loadRazorpayScript()
     if (!scriptLoaded) {
-      setSubmitError('পেমেন্ট গেটওয়ে লোড করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।')
+      setReviewOpen(false)
       setSubmitting(false)
+      setFailure({
+        message: 'পেমেন্ট গেটওয়ে লোড করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।',
+        retryable: true,
+      })
       return
     }
 
@@ -127,15 +163,25 @@ export default function ApplicationForm() {
       onSuccess: (response) => finalizeSubmission(response),
       onDismiss: () => {
         setSubmitting(false)
-        setSubmitError('পেমেন্ট সম্পন্ন হয়নি। অনুগ্রহ করে আবার চেষ্টা করুন।')
+        setReviewOpen(false)
+        setFailure({ message: 'পেমেন্ট সম্পন্ন হয়নি। অনুগ্রহ করে আবার চেষ্টা করুন।', retryable: true })
       },
       onFailure: (response) => {
         setSubmitting(false)
-        setSubmitError(
-          `পেমেন্ট ব্যর্থ হয়েছে। ${response?.error?.description || 'অনুগ্রহ করে আবার চেষ্টা করুন।'}`
-        )
+        setReviewOpen(false)
+        setFailure({
+          message: `পেমেন্ট ব্যর্থ হয়েছে। ${response?.error?.description || 'অনুগ্রহ করে আবার চেষ্টা করুন।'}`,
+          retryable: true,
+        })
       },
     })
+  }
+
+  const handleCloseFailure = () => setFailure(null)
+
+  const handleRetry = () => {
+    setFailure(null)
+    setReviewOpen(true)
   }
 
   const handleCloseSuccess = () => {
@@ -147,7 +193,7 @@ export default function ApplicationForm() {
     setWebsite('')
     setDocFiles({})
     setApplicationId('')
-    setSubmitError('')
+    setPaymentId('')
     formRef.current?.reset()
     setFormKey((k) => k + 1)
   }
@@ -213,13 +259,20 @@ export default function ApplicationForm() {
         getValue={form.getValue}
         awards={form.awards}
         submitting={submitting}
-        error={submitError}
       />
       <SuccessModal
         open={successOpen}
         onClose={handleCloseSuccess}
         applicationId={applicationId}
+        paymentId={paymentId}
         onPrint={handlePrint}
+      />
+      <FailureModal
+        open={!!failure}
+        onClose={handleCloseFailure}
+        message={failure?.message}
+        paymentId={failure?.paymentId}
+        onRetry={failure?.retryable ? handleRetry : undefined}
       />
     </>
   )

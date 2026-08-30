@@ -213,6 +213,7 @@ export const APPLICANT_SECTION = {
     {
       name: "email",
       label: "Email Address",
+      required: true,
       type: "email",
       placeholder: "example@email.com",
     },

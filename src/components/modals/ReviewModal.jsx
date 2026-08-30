@@ -9,7 +9,6 @@ export default function ReviewModal({
   getValue,
   awards,
   submitting = false,
-  error = '',
 }) {
   const rows = REVIEW_LABELS.map(([name, label]) => [label, getValue(name)])
   rows.push(['সম্মান বিভাগ', awards.length ? awards.join(', ') : '—'])
@@ -39,11 +38,6 @@ export default function ReviewModal({
         পেমেন্ট সফল হলেই আবেদনটি জমা হবে।
       </p>
 
-      {error && (
-        <p role="alert" className="text-[#b13b46] text-xs mt-4 text-right">
-          {error}
-        </p>
-      )}
       {submitting && (
         <p role="status" className="text-xs text-[#776a64] mt-4 text-right">
           পেমেন্ট প্রক্রিয়া চলছে, অনুগ্রহ করে অপেক্ষা করুন…
