@@ -1,10 +1,12 @@
 // Config-driven form field. Renders input / textarea / select
-// based on the `field` definition from content.js.
+// based on the `field` definition from the active translation bundle.
+import { useTranslation } from '../../i18n/I18nContext.jsx'
 
 const inputBase =
-  'w-full border rounded-lg px-[13px] text-[#302927] bg-[#fffdfa] outline-none transition-all duration-200 focus:border-[#a3444e] focus:shadow-[0_0_0_3px_#a3444e10]'
+  'w-full border rounded-lg px-[13px] text-[15px] text-[#302927] bg-[#fffdfa] outline-none transition-all duration-200 focus:border-[#a3444e] focus:shadow-[0_0_0_3px_#a3444e10]'
 
 export default function Field({ field, value, error, onChange }) {
+  const { t } = useTranslation()
   const {
     name,
     label,
@@ -49,10 +51,10 @@ export default function Field({ field, value, error, onChange }) {
           onChange={handle}
           className={`${inputBase} ${borderClass} ${controlHeight}`}
         >
-          <option value="">নির্বাচন করুন</option>
+          <option value="">{t.ui.selectPlaceholder}</option>
           {options.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
             </option>
           ))}
         </select>
@@ -76,7 +78,7 @@ export default function Field({ field, value, error, onChange }) {
 
       {error && (
         <small className="text-[11px] text-[#b13b46]">
-          {typeof error === 'string' ? error : 'এই ঘরটি পূরণ করুন।'}
+          {typeof error === 'string' ? error : t.validation.required}
         </small>
       )}
     </label>

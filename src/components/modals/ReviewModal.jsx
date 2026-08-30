@@ -1,7 +1,7 @@
 import Modal from './Modal.jsx'
 import Button from '../ui/Button.jsx'
 import Spinner from '../ui/Spinner.jsx'
-import { REVIEW_LABELS, APPLICATION_FEE } from '../../data/content.js'
+import { useTranslation } from '../../i18n/I18nContext.jsx'
 
 export default function ReviewModal({
   open,
@@ -11,16 +11,20 @@ export default function ReviewModal({
   awards,
   submitting = false,
 }) {
-  const rows = REVIEW_LABELS.map(([name, label]) => [label, getValue(name)])
-  rows.push(['সম্মান বিভাগ', awards.length ? awards.join(', ') : '—'])
+  const { t } = useTranslation()
+  const ui = t.ui.reviewModal
+  const fee = t.applicationFee
+
+  const rows = t.reviewLabels.map(([name, label]) => [label, getValue(name)])
+  rows.push([ui.awardsRowLabel, awards.length ? awards.join(', ') : '—'])
 
   return (
     <Modal open={open} onClose={onClose}>
       <div className="text-[10px] tracking-[2px] uppercase text-[#a06e31] font-extrabold">
-        Sayan Digital presents
+        {ui.presented}
       </div>
-      <h2 className="font-serif font-bold text-[30px] my-[5px]">আবেদনটি যাচাই করুন</h2>
-      <p className="text-[13px] text-[#776a64]">জমা দেওয়ার আগে প্রদত্ত তথ্যগুলি একবার যাচাই করে নিন।</p>
+      <h2 className="font-serif font-bold text-[30px] my-[5px]">{ui.title}</h2>
+      <p className="text-[13px] text-[#776a64]">{ui.sub}</p>
 
       <div className="my-5 border-t border-[#e7ddd5]">
         {rows.map(([label, value]) => (
@@ -34,18 +38,21 @@ export default function ReviewModal({
         ))}
       </div>
 
-      <p className="text-xs text-[#776a64] mt-4">
-        আবেদন জমা দিতে <b className="text-[#282321]">₹{APPLICATION_FEE.amount}</b> {APPLICATION_FEE.label} প্রদান করতে হবে।
-        পেমেন্ট সফল হলেই আবেদনটি জমা হবে।
-      </p>
+      <p className="text-xs text-[#776a64] mt-4">{ui.feeNote(fee.amount, fee.label)}</p>
+
+      {submitting && (
+        <p role="status" className="text-xs text-[#776a64] mt-4 text-right">
+          {ui.processingStatus}
+        </p>
+      )}
 
       <div className="flex justify-end gap-2.5 mt-5">
         <Button variant="ghost" onClick={onClose} disabled={submitting}>
-          তথ্য পরিবর্তন করুন
+          {ui.editButton}
         </Button>
         <Button variant="primary" onClick={onConfirm} disabled={submitting}>
           {submitting && <Spinner className="w-4 h-4" color="#fff" />}
-          {submitting ? 'প্রস্তুত করা হচ্ছে…' : `₹${APPLICATION_FEE.amount} পেমেন্ট করে জমা দিন`}
+          {submitting ? ui.preparing : ui.payButton(fee.amount)}
         </Button>
       </div>
     </Modal>

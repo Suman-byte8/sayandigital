@@ -1,6 +1,8 @@
-import { STATS } from '../../data/content.js'
+import { useTranslation } from '../../i18n/I18nContext.jsx'
 
 export default function StatsStrip() {
+  const { t } = useTranslation()
+  const STATS = t.stats
   return (
     <section className="bg-white border-b border-[#eee1d4]">
       <div className="w-[min(1160px,calc(100%-40px))] mx-auto grid grid-cols-4 py-[25px] max-[850px]:grid-cols-2 max-[850px]:gap-2.5 max-[560px]:grid-cols-2">

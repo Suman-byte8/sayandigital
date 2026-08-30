@@ -1,6 +1,8 @@
-import { NOTICE } from '../../data/content.js'
+import { useTranslation } from '../../i18n/I18nContext.jsx'
 
 export default function NoticeSection() {
+  const { t } = useTranslation()
+  const NOTICE = t.notice
   return (
     <section className="pt-0 pb-10">
       <div className="w-[min(1160px,calc(100%-40px))] mx-auto bg-[#fff5df] border border-[#ead5a9] rounded-[12px] px-6 py-5 flex gap-4 items-start">

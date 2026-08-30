@@ -1,7 +1,8 @@
-import { AWARDS_SECTION } from '../../data/content.js'
+import { useTranslation } from '../../i18n/I18nContext.jsx'
 
 export default function AwardsSection({ selected, error, onToggle }) {
-  const s = AWARDS_SECTION
+  const { t } = useTranslation()
+  const s = t.awardsSection
   return (
     <div id="awards-section" className="p-[42px] border-b border-[#eee5de] max-[560px]:px-[18px] max-[560px]:py-[27px]">
       <div className="flex gap-4 items-start mb-7">

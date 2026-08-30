@@ -1,6 +1,8 @@
-import { PROGRESS_STEPS } from '../../data/content.js'
+import { useTranslation } from '../../i18n/I18nContext.jsx'
 
 export default function ProgressBar({ pct, stepIndex }) {
+  const { t } = useTranslation()
+  const PROGRESS_STEPS = t.progressSteps
   return (
     <div className="h-[92px] grid grid-cols-6 items-center px-7 relative bg-[#fffaf5] border-b border-[#eee2d8] max-[850px]:overflow-x-auto max-[850px]:min-w-[680px] before:content-[''] before:absolute before:h-0.5 before:bg-[#dfd3ca] before:left-[70px] before:right-[70px] before:top-[35px]">
       {/* Fill */}

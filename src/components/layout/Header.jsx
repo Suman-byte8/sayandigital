@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { BRAND, NAV_LINKS } from "../../data/content.js";
+import { useTranslation } from "../../i18n/I18nContext.jsx";
+import LanguageSwitcher from "../ui/LanguageSwitcher.jsx";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <header className="h-[76px] bg-[rgba(255,252,247,0.94)] backdrop-blur-[14px] border-b border-[#eadfd3] sticky top-0 z-50">
@@ -11,38 +13,42 @@ export default function Header() {
         <a href="#home" className="flex items-center gap-3">
           <img
             src="/logo.png"
-            alt={BRAND.name}
+            alt={t.brand.name}
             className="w-36 h-36 rounded-xl object-contain"
           />
         </a>
 
-        {/* Mobile toggle */}
-        <button
-          className="hidden max-[850px]:block border-0 bg-none text-[25px]"
-          aria-label="মেনু খুলুন"
-          aria-expanded={open}
-          onClick={() => setOpen((o) => !o)}
-        >
-          ☰
-        </button>
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher />
 
-        {/* Nav */}
-        <nav
-          className={`flex gap-7 text-sm text-[#5e504c] max-[850px]:absolute max-[850px]:left-5 max-[850px]:right-5 max-[850px]:top-[70px] max-[850px]:bg-white max-[850px]:p-3.5 max-[850px]:border max-[850px]:border-[#eadfd3] max-[850px]:rounded-[10px] max-[850px]:shadow-[0_15px_35px_#0001] max-[850px]:flex-col max-[850px]:gap-0 ${
-            open ? "max-[850px]:flex" : "max-[850px]:hidden"
-          }`}
-        >
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className="hover:text-[#9c3441] max-[850px]:p-2.5"
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
+          {/* Mobile toggle */}
+          <button
+            className="hidden max-[850px]:block border-0 bg-none text-[25px]"
+            aria-label={t.ui.menuOpen}
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+          >
+            ☰
+          </button>
+
+          {/* Nav */}
+          <nav
+            className={`flex gap-7 text-sm text-[#5e504c] max-[850px]:absolute max-[850px]:left-5 max-[850px]:right-5 max-[850px]:top-[70px] max-[850px]:bg-white max-[850px]:p-3.5 max-[850px]:border max-[850px]:border-[#eadfd3] max-[850px]:rounded-[10px] max-[850px]:shadow-[0_15px_35px_#0001] max-[850px]:flex-col max-[850px]:gap-0 ${
+              open ? "max-[850px]:flex" : "max-[850px]:hidden"
+            }`}
+          >
+            {t.nav.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className="hover:text-[#9c3441] max-[850px]:p-2.5"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+        </div>
       </div>
     </header>
   );

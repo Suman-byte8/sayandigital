@@ -1,6 +1,8 @@
-import { PROCESS } from '../../data/content.js'
+import { useTranslation } from '../../i18n/I18nContext.jsx'
 
 export default function ProcessSection() {
+  const { t } = useTranslation()
+  const PROCESS = t.process
   return (
     <section id="process" className="py-[95px] bg-[#fbf8f2] max-[560px]:py-[65px]">
       <div className="w-[min(1160px,calc(100%-40px))] mx-auto">

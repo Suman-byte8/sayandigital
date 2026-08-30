@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock.js'
+import { useTranslation } from '../../i18n/I18nContext.jsx'
 
 export default function Modal({ open, onClose, children, showClose = true, cardClass = '' }) {
+  const { t } = useTranslation()
   useBodyScrollLock(open)
 
   // Close on Escape
@@ -25,7 +27,7 @@ export default function Modal({ open, onClose, children, showClose = true, cardC
         {showClose && (
           <button
             onClick={onClose}
-            aria-label="বন্ধ করুন"
+            aria-label={t.ui.close}
             className="absolute right-[18px] top-[15px] border-0 bg-none text-[27px] text-[#7a6b65]"
           >
             ×

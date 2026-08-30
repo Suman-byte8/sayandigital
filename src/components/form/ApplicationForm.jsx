@@ -1,12 +1,8 @@
 import { useRef, useState } from 'react'
-import {
-  COMMITTEE_SECTION,
-  APPLICANT_SECTION,
-  PUJA_SECTION,
-} from '../../data/content.js'
+import { useTranslation } from '../../i18n/I18nContext.jsx'
 import { useApplicationForm } from '../../hooks/useApplicationForm.js'
 import { printAcknowledgement } from '../../utils/helpers.js'
-import { submitForm, createPaymentOrder } from '../../lib/forms.js'
+import { submitForm, createPaymentOrder, reportPaymentFailure } from '../../lib/forms.js'
 import { loadRazorpayScript, openRazorpayCheckout } from '../../lib/razorpay.js'
 
 import ProgressBar from './ProgressBar.jsx'
@@ -23,6 +19,7 @@ import FailureModal from '../modals/FailureModal.jsx'
 const FORM_TYPE = 'application'
 
 export default function ApplicationForm() {
+  const { t, lang } = useTranslation()
   const form = useApplicationForm()
   const [agreed, setAgreed] = useState(false)
   const [website, setWebsite] = useState('') // honeypot — real users never fill this
@@ -66,6 +63,8 @@ export default function ApplicationForm() {
   // Sends the form + files to the backend along with the Razorpay payment
   // proof. Code.gs re-verifies the payment before it saves anything, so a
   // forged/incomplete payment object simply gets rejected server-side.
+  // `language` travels with the submission so the backend can send the
+  // confirmation email in the same language the applicant used here.
   const finalizeSubmission = async (payment) => {
     try {
       const files = {}
@@ -79,11 +78,13 @@ export default function ApplicationForm() {
           ...form.values,
           awards: form.awards,
           website,
+          language: lang,
           razorpayOrderId: payment.razorpay_order_id,
           razorpayPaymentId: payment.razorpay_payment_id,
           razorpaySignature: payment.razorpay_signature,
         },
-        files
+        files,
+        lang
       )
 
       if (!result.ok) {
@@ -92,9 +93,7 @@ export default function ApplicationForm() {
         // retry (no onRetry), and surface the payment ID so support can
         // find it.
         setFailure({
-          message:
-            result.error ||
-            'পেমেন্ট সফল হয়েছে কিন্তু আবেদন জমা হয়নি। অনুগ্রহ করে নিচের রেফারেন্স নম্বরটি সংরক্ষণ করে সাপোর্টে যোগাযোগ করুন।',
+          message: result.error || t.ui.payment.savedFailedAfterCharge,
           retryable: false,
           paymentId: payment.razorpay_payment_id,
         })
@@ -127,14 +126,11 @@ export default function ApplicationForm() {
 
     setSubmitting(true)
 
-    const order = await createPaymentOrder()
+    const order = await createPaymentOrder(lang)
     if (!order.ok) {
       setReviewOpen(false)
       setSubmitting(false)
-      setFailure({
-        message: order.error || 'পেমেন্ট শুরু করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।',
-        retryable: true,
-      })
+      setFailure({ message: order.error || t.ui.payment.orderFailed, retryable: true })
       return
     }
 
@@ -142,10 +138,7 @@ export default function ApplicationForm() {
     if (!scriptLoaded) {
       setReviewOpen(false)
       setSubmitting(false)
-      setFailure({
-        message: 'পেমেন্ট গেটওয়ে লোড করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।',
-        retryable: true,
-      })
+      setFailure({ message: t.ui.payment.gatewayLoadFailed, retryable: true })
       return
     }
 
@@ -161,8 +154,8 @@ export default function ApplicationForm() {
       orderId: order.orderId,
       amount: order.amount,
       currency: order.currency,
-      name: 'শারদ সম্মান ২০২৬',
-      description: `${form.getValue('clubName')} — আবেদন ফি`,
+      name: t.brand.event,
+      description: t.ui.payment.itemDescription(form.getValue('clubName'), t.applicationFee.label),
       prefill: {
         name: form.getValue('applicant'),
         email: form.values.email || '',
@@ -171,14 +164,31 @@ export default function ApplicationForm() {
       onSuccess: (response) => finalizeSubmission(response),
       onDismiss: () => {
         setSubmitting(false)
-        setFailure({ message: 'পেমেন্ট সম্পন্ন হয়নি। অনুগ্রহ করে আবার চেষ্টা করুন।', retryable: true })
+        setFailure({ message: t.ui.payment.dismissed, retryable: true })
       },
       onFailure: (response) => {
         setSubmitting(false)
         setFailure({
-          message: `পেমেন্ট ব্যর্থ হয়েছে। ${response?.error?.description || 'অনুগ্রহ করে আবার চেষ্টা করুন।'}`,
+          message: t.ui.payment.failed(response?.error?.description),
           retryable: true,
         })
+
+        // A genuine declined/failed charge attempt (has a real payment_id
+        // on Razorpay's side) — report it so the backend can independently
+        // verify it via Razorpay's API and email the applicant. Fire and
+        // forget: this must never block or fail the UI the user sees.
+        const failedPaymentId = response?.error?.metadata?.payment_id
+        const failedOrderId = response?.error?.metadata?.order_id
+        if (failedPaymentId) {
+          reportPaymentFailure({
+            razorpayPaymentId: failedPaymentId,
+            razorpayOrderId: failedOrderId,
+            applicant: form.getValue('applicant'),
+            clubName: form.getValue('clubName'),
+            email: form.values.email || '',
+            language: lang,
+          }).catch(() => {})
+        }
       },
     })
   }
@@ -210,6 +220,7 @@ export default function ApplicationForm() {
       club: form.getValue('clubName'),
       applicant: form.getValue('applicant'),
       mobile: form.getValue('mobile'),
+      lang,
     })
   }
 
@@ -231,19 +242,19 @@ export default function ApplicationForm() {
             aria-hidden="true"
           />
           <FormSection
-            section={COMMITTEE_SECTION}
+            section={t.committeeSection}
             values={form.values}
             errors={form.errors}
             onChange={form.setField}
           />
           <FormSection
-            section={APPLICANT_SECTION}
+            section={t.applicantSection}
             values={form.values}
             errors={form.errors}
             onChange={form.setField}
           />
           <FormSection
-            section={PUJA_SECTION}
+            section={t.pujaSection}
             values={form.values}
             errors={form.errors}
             onChange={form.setField}

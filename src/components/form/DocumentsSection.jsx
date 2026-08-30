@@ -1,17 +1,17 @@
 import { useState } from 'react'
-import { DOCUMENTS_SECTION } from '../../data/content.js'
+import { useTranslation } from '../../i18n/I18nContext.jsx'
 
 const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
 
-function UploadRow({ doc, onFile }) {
-  const [status, setStatus] = useState({ text: 'কোনও ফাইল নির্বাচিত নয়', ok: null })
+function UploadRow({ doc, onFile, ui }) {
+  const [status, setStatus] = useState({ text: ui.noFileSelected, ok: null })
 
   const handleFile = (e) => {
     const file = e.target.files[0]
     if (!file) return
     if (file.size > MAX_SIZE) {
       e.target.value = ''
-      setStatus({ text: 'ফাইলের আকার 5 MB-এর বেশি।', ok: false })
+      setStatus({ text: ui.fileTooLarge, ok: false })
       onFile(null) // clear any previously hoisted selection
       return
     }
@@ -29,7 +29,7 @@ function UploadRow({ doc, onFile }) {
         <small className="block text-[10px] text-[#8c7c74]">{doc.hint}</small>
       </div>
       <label className="border border-[#a3434d] text-[#8e303b] rounded-[7px] px-3 py-2 text-[11px] font-bold cursor-pointer whitespace-nowrap">
-        ফাইল নির্বাচন
+        {ui.chooseFile}
         <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFile} className="hidden" />
       </label>
       <span className={`text-[10px] overflow-hidden text-ellipsis whitespace-nowrap max-[850px]:col-span-full ${statusColor}`}>
@@ -40,7 +40,8 @@ function UploadRow({ doc, onFile }) {
 }
 
 export default function DocumentsSection({ onDocFile }) {
-  const s = DOCUMENTS_SECTION
+  const { t } = useTranslation()
+  const s = t.documentsSection
   return (
     <div id="documents" className="p-[42px] border-b border-[#eee5de] max-[560px]:px-[18px] max-[560px]:py-[27px]">
       <div className="flex gap-4 items-start mb-7">
@@ -55,7 +56,7 @@ export default function DocumentsSection({ onDocFile }) {
 
       <div className="flex flex-col gap-2.5">
         {s.docs.map((doc) => (
-          <UploadRow key={doc.id} doc={doc} onFile={(file) => onDocFile(doc.id, file)} />
+          <UploadRow key={doc.id} doc={doc} onFile={(file) => onDocFile(doc.id, file)} ui={t.ui.documents} />
         ))}
       </div>
     </div>

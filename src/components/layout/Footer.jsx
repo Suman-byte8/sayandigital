@@ -1,6 +1,10 @@
-import { FOOTER } from '../../data/content.js'
+import { useTranslation } from '../../i18n/I18nContext.jsx'
+import { DEVELOPER_PORTFOLIO_URL } from '../../data/content.js'
 
 export default function Footer() {
+  const { t } = useTranslation()
+  const FOOTER = t.footer
+
   return (
     <footer className="bg-[#32151c] text-[#eadfd5] pt-[55px]">
       <div className="w-[min(1160px,calc(100%-40px))] mx-auto grid grid-cols-[2fr_1fr_1fr] gap-[50px] pb-10 max-[850px]:grid-cols-2 max-[560px]:grid-cols-1 max-[560px]:gap-5">
@@ -41,6 +45,16 @@ export default function Footer() {
       </div>
       <div className="border-t border-[#5b363d] text-center py-[17px] text-[10px] text-[#98847e]">
         {FOOTER.copyright}
+        <span className="mx-1.5">·</span>
+        {FOOTER.madeBy}{' '}
+        <a
+          href={DEVELOPER_PORTFOLIO_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#c9a262] hover:text-[#e2bd71] underline underline-offset-2"
+        >
+          {FOOTER.developerName}
+        </a>
       </div>
     </footer>
   )

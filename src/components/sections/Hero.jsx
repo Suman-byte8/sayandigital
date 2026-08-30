@@ -1,9 +1,11 @@
-import { HERO } from "../../data/content.js";
+import { useTranslation } from "../../i18n/I18nContext.jsx";
 import Button from "../ui/Button.jsx";
 import pcBg from "../../assets/pc_view_background.webp";
 import mobileBg from "../../assets/mobile_view_background.png";
 
 export default function Hero() {
+  const { t } = useTranslation();
+  const HERO = t.hero;
   return (
     <section
       id="home"

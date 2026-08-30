@@ -1,3 +1,4 @@
+import { I18nProvider } from "./i18n/I18nContext.jsx";
 import Header from "./components/layout/Header.jsx";
 import Footer from "./components/layout/Footer.jsx";
 import Hero from "./components/sections/Hero.jsx";
@@ -9,7 +10,7 @@ import Gallery from "./components/sections/Gallery.jsx";
 
 export default function App() {
   return (
-    <>
+    <I18nProvider>
       <Header />
       <main>
         <Hero />
@@ -20,6 +21,6 @@ export default function App() {
         <ApplicationSection />
       </main>
       <Footer />
-    </>
+    </I18nProvider>
   );
 }

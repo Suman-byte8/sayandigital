@@ -1,22 +1,5 @@
 import { useMemo, useState } from 'react'
-import {
-  COMMITTEE_SECTION,
-  APPLICANT_SECTION,
-  PUJA_SECTION,
-} from '../data/content.js'
-
-// Flattened field config from every section, in document order — reused
-// both to derive required fields and to drive type-based validation.
-const ALL_FIELDS = [COMMITTEE_SECTION, APPLICANT_SECTION, PUJA_SECTION].flatMap(
-  (s) => s.fields
-)
-
-const REQUIRED_FIELDS = ALL_FIELDS.filter((f) => f.required).map((f) => f.name)
-
-const TOTAL_REQUIRED = REQUIRED_FIELDS.length
-
-// Seed default values (e.g. disabled puja year)
-const INITIAL = { pujaYear: '২০২৬' }
+import { useTranslation } from '../i18n/I18nContext.jsx'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -24,22 +7,34 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PHONE_RE = /^[6-9]\d{9}$/
 const PHONE_FIELDS = new Set(['mobile', 'whatsapp', 'alternate'])
 
-// Bengali validation messages shown under each field by Field.jsx
-const MESSAGES = {
-  required: 'এই ঘরটি পূরণ করুন।',
-  mobile: 'সঠিক ১০ সংখ্যার মোবাইল নম্বর লিখুন (৬–৯ দিয়ে শুরু)।',
-  pin: 'সঠিক ৬ সংখ্যার পিন কোড লিখুন।',
-  email: 'সঠিক ইমেল ঠিকানা লিখুন।',
-  number: 'সঠিক সংখ্যা লিখুন।',
-  date: 'সঠিক তারিখ নির্বাচন করুন।',
-  dateRange: 'শেষের তারিখ শুরুর তারিখের আগে হতে পারে না।',
+// Seed default values (e.g. the disabled puja year) from whichever
+// language is active at mount — the field itself is read-only, so this
+// only needs to be correct for the starting language, same as any other
+// value already on screen when the user switches languages later.
+function initialValues(t) {
+  const pujaYear = t.pujaSection.fields.find((f) => f.name === 'pujaYear')
+  return { pujaYear: pujaYear?.defaultValue || '' }
 }
 
 export function useApplicationForm() {
-  const [values, setValues] = useState(INITIAL)
+  const { t } = useTranslation()
+  const [values, setValues] = useState(() => initialValues(t))
   const [awards, setAwards] = useState([])
-  const [errors, setErrors] = useState({}) // { fieldName: 'বাংলা বার্তা' }
+  const [errors, setErrors] = useState({}) // { fieldName: 'translated message' }
   const [awardsError, setAwardsError] = useState('')
+
+  // Field config is language-dependent (labels/placeholders differ), but
+  // `name`/`type`/`required`/`min`/`max` are identical across languages —
+  // so switching language never changes which fields exist or are required.
+  const ALL_FIELDS = useMemo(
+    () => [t.committeeSection, t.applicantSection, t.pujaSection].flatMap((s) => s.fields),
+    [t]
+  )
+  const REQUIRED_FIELDS = useMemo(
+    () => ALL_FIELDS.filter((f) => f.required).map((f) => f.name),
+    [ALL_FIELDS]
+  )
+  const TOTAL_REQUIRED = REQUIRED_FIELDS.length
 
   const setField = (name, value) => {
     setValues((v) => ({ ...v, [name]: value }))
@@ -65,14 +60,15 @@ export function useApplicationForm() {
     const pct = Math.min(100, (done / TOTAL_REQUIRED) * 100)
     const stepIndex = Math.min(6, Math.max(1, Math.ceil((done / TOTAL_REQUIRED) * 6)))
     return { pct, stepIndex, done, total: TOTAL_REQUIRED }
-  }, [values])
+  }, [values, REQUIRED_FIELDS, TOTAL_REQUIRED])
 
-  // Validates every field against the type/shape declared in content.js —
-  // the form is noValidate, so the browser never enforces this for us.
-  // Format checks only run once a value is present so optional fields
-  // (e.g. alternate contact) don't block submission when left blank.
+  // Validates every field against the type/shape declared in the active
+  // translation bundle — the form is noValidate, so the browser never
+  // enforces this for us. Format checks only run once a value is present
+  // so optional fields (e.g. alternate contact) don't block submission.
   const validate = () => {
     const nextErrors = {}
+    const MESSAGES = t.validation
 
     REQUIRED_FIELDS.forEach((name) => {
       if (!String(values[name] || '').trim()) nextErrors[name] = MESSAGES.required
@@ -89,9 +85,9 @@ export function useApplicationForm() {
         if (Number.isNaN(num)) {
           nextErrors[field.name] = MESSAGES.number
         } else if (field.min != null && num < field.min) {
-          nextErrors[field.name] = `মান কমপক্ষে ${field.min} হতে হবে।`
+          nextErrors[field.name] = MESSAGES.minValue(field.min)
         } else if (field.max != null && num > field.max) {
-          nextErrors[field.name] = `মান সর্বোচ্চ ${field.max} হতে পারে।`
+          nextErrors[field.name] = MESSAGES.maxValue(field.max)
         }
       } else if (field.type === 'date') {
         if (Number.isNaN(Date.parse(value))) nextErrors[field.name] = MESSAGES.date
@@ -116,7 +112,7 @@ export function useApplicationForm() {
     }
 
     const validAwards = awards.length > 0
-    setAwardsError(validAwards ? '' : 'কমপক্ষে একটি সম্মান বিভাগ নির্বাচন করুন।')
+    setAwardsError(validAwards ? '' : MESSAGES.awardsRequired)
 
     setErrors(nextErrors)
 
@@ -130,7 +126,7 @@ export function useApplicationForm() {
 
   // Back to a pristine form (called after a successful submission).
   const reset = () => {
-    setValues(INITIAL)
+    setValues(initialValues(t))
     setAwards([])
     setErrors({})
     setAwardsError('')

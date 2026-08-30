@@ -1,7 +1,9 @@
-import { APPLICATION_INTRO } from '../../data/content.js'
+import { useTranslation } from '../../i18n/I18nContext.jsx'
 import ApplicationForm from '../form/ApplicationForm.jsx'
 
 export default function ApplicationSection() {
+  const { t } = useTranslation()
+  const APPLICATION_INTRO = t.applicationIntro
   return (
     <section id="application" className="pt-[45px] pb-[95px] max-[560px]:pb-[65px]">
       <div className="w-[min(1160px,calc(100%-40px))] mx-auto">

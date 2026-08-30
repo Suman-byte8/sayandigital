@@ -1,7 +1,9 @@
-import { DECLARATION } from '../../data/content.js'
+import { useTranslation } from '../../i18n/I18nContext.jsx'
 import Button from '../ui/Button.jsx'
 
 export default function Declaration({ agreed, onAgreeChange }) {
+  const { t } = useTranslation()
+  const DECLARATION = t.declaration
   return (
     <div className="p-[42px] bg-[#fffcf8] max-[560px]:px-[18px] max-[560px]:py-[27px]">
       <div className="flex gap-4 p-5 border border-[#eadfcf] bg-[#fff8ea] rounded-[10px]">

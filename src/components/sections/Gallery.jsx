@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useMemo } from "react";
 import { GALLERY_DATA } from "../../data/content";
+import { useTranslation } from "../../i18n/I18nContext.jsx";
 
 // Split a flat array into `count` roughly-even chunks
 const splitIntoRows = (arr, count) => {
@@ -9,6 +10,7 @@ const splitIntoRows = (arr, count) => {
 };
 
 const GalleryRow = ({ images, direction, speed, onSelect }) => {
+  const { t } = useTranslation();
   const trackRef = useRef(null);
   const isDragging = useRef(false);
   const dragMoved = useRef(false);
@@ -72,7 +74,7 @@ const GalleryRow = ({ images, direction, speed, onSelect }) => {
           >
             <img
               src={url}
-              alt="Gallery"
+              alt={t.ui.galleryImageAlt}
               loading="lazy"
               draggable={false}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -89,6 +91,7 @@ const GalleryRow = ({ images, direction, speed, onSelect }) => {
 };
 
 const Gallery = ({ year: initialYear }) => {
+  const { t } = useTranslation();
   const years = useMemo(
     () => Object.keys(GALLERY_DATA).sort((a, b) => b - a),
     [],
@@ -136,7 +139,7 @@ const Gallery = ({ year: initialYear }) => {
 
       {!images.length ? (
         <div className="py-10 text-center text-gray-500">
-          No images available for {activeYear}.
+          {t.ui.galleryNoImages(activeYear)}
         </div>
       ) : (
         <div className="flex flex-col gap-2 sm:gap-3 md:gap-4">
@@ -163,14 +166,14 @@ const Gallery = ({ year: initialYear }) => {
             type="button"
             onClick={() => setSelectedImage(null)}
             className="absolute right-4 top-4 z-10 text-3xl leading-none text-white sm:right-6 sm:top-6"
-            aria-label="Close image"
+            aria-label={t.ui.galleryCloseImage}
           >
             ×
           </button>
 
           <img
             src={selectedImage}
-            alt="Selected"
+            alt={t.ui.gallerySelectedAlt}
             className="max-h-[85vh] max-w-[95vw] rounded-lg object-contain sm:max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           />
