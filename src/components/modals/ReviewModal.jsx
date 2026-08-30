@@ -1,6 +1,6 @@
 import Modal from './Modal.jsx'
 import Button from '../ui/Button.jsx'
-import { REVIEW_LABELS } from '../../data/content.js'
+import { REVIEW_LABELS, APPLICATION_FEE } from '../../data/content.js'
 
 export default function ReviewModal({
   open,
@@ -34,6 +34,11 @@ export default function ReviewModal({
         ))}
       </div>
 
+      <p className="text-xs text-[#776a64] mt-4">
+        আবেদন জমা দিতে <b className="text-[#282321]">₹{APPLICATION_FEE.amount}</b> {APPLICATION_FEE.label} প্রদান করতে হবে।
+        পেমেন্ট সফল হলেই আবেদনটি জমা হবে।
+      </p>
+
       {error && (
         <p role="alert" className="text-[#b13b46] text-xs mt-4 text-right">
           {error}
@@ -41,7 +46,7 @@ export default function ReviewModal({
       )}
       {submitting && (
         <p role="status" className="text-xs text-[#776a64] mt-4 text-right">
-          আপনার আবেদন জমা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন…
+          পেমেন্ট প্রক্রিয়া চলছে, অনুগ্রহ করে অপেক্ষা করুন…
         </p>
       )}
 
@@ -50,7 +55,7 @@ export default function ReviewModal({
           তথ্য পরিবর্তন করুন
         </Button>
         <Button variant="primary" onClick={onConfirm} disabled={submitting}>
-          {submitting ? 'পাঠানো হচ্ছে…' : 'আবেদন জমা দিন'}
+          {submitting ? 'অপেক্ষা করুন…' : `₹${APPLICATION_FEE.amount} পেমেন্ট করে জমা দিন`}
         </Button>
       </div>
     </Modal>

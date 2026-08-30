@@ -52,7 +52,7 @@ export const PROCESS = {
       num: "০২",
       icon: "↥",
       title: "নথি সংযুক্ত করুন",
-      desc: "প্রয়োজনীয় নথি ও পূজার ছবি আপলোড করুন।",
+      desc: "প্রয়োজনীয় নথি আপলোড করুন।",
     },
     {
       num: "০৩",
@@ -63,8 +63,8 @@ export const PROCESS = {
     {
       num: "০৪",
       icon: "→",
-      title: "আবেদন জমা দিন",
-      desc: "আবেদন নম্বরটি সংরক্ষণ করে রাখুন।",
+      title: "পেমেন্ট করে জমা দিন",
+      desc: "আবেদন ফি প্রদান করে আবেদন নম্বরটি সংরক্ষণ করে রাখুন।",
     },
   ],
 };
@@ -237,6 +237,18 @@ export const PUJA_SECTION = {
       defaultValue: "২০২৬",
     },
     {
+      name: "startDate",
+      label: "পূজা শুরুর তারিখ",
+      required: true,
+      type: "date",
+    },
+    {
+      name: "endDate",
+      label: "পূজা শেষের তারিখ",
+      required: true,
+      type: "date",
+    },
+    {
       name: "idolType",
       label: "প্রতিমার ধরন",
       placeholder: "যেমন: সাবেকি / থিম",
@@ -333,7 +345,7 @@ export const AWARDS_SECTION = {
 
 export const DOCUMENTS_SECTION = {
   num: "০৫",
-  title: "প্রয়োজনীয় নথি ও ছবি",
+  title: "প্রয়োজনীয় নথি",
   sub: "নির্ধারিত ফরম্যাটে প্রয়োজনীয় ফাইল সংযুক্ত করুন।",
   docs: [
     {
@@ -346,17 +358,13 @@ export const DOCUMENTS_SECTION = {
       title: "পূজা কমিটির ঠিকানার প্রমাণ",
       hint: "PDF, JPG, PNG • সর্বোচ্চ 5 MB",
     },
-    {
-      id: "doc4",
-      title: "পেমেন্টের স্ক্রিনশট / প্রমান",
-      hint: "PDF, JPG, PNG • সর্বোচ্চ 5 MB",
-    },
   ],
-  photo: {
-    title: "পূজার ছবি",
-    hint: "মণ্ডপ, প্রতিমা, আলোকসজ্জা ও থিমের ছবি আপলোড করুন। সর্বোচ্চ ৮টি ছবি।",
-    max: 8,
-  },
+};
+
+// Application fee collected via Razorpay before a submission is saved.
+export const APPLICATION_FEE = {
+  amount: 160, // INR
+  label: "আবেদন ফি",
 };
 
 export const DECLARATION = {

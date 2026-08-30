@@ -55,6 +55,58 @@ function flattenFiles(files) {
   return { entries, tooBig }
 }
 
+// Asks the backend to create a Razorpay order for the application fee.
+// The Key Secret never leaves Code.gs — this only returns the order_id
+// and the public Key ID needed to open Razorpay Checkout.
+export async function createPaymentOrder() {
+  try {
+    const endpoint = import.meta.env.VITE_FORMS_ENDPOINT
+    const token = import.meta.env.VITE_FORMS_TOKEN
+
+    if (!endpoint || !/^https?:\/\//.test(endpoint) || endpoint === 'PASTE_YOUR_EXEC_URL_HERE') {
+      return {
+        ok: false,
+        error:
+          'সার্ভারের ঠিকানা এখনও কনফিগার করা হয়নি। অনুগ্রহ করে .env ফাইলে VITE_FORMS_ENDPOINT বসিয়ে আবার চেষ্টা করুন।',
+      }
+    }
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      redirect: 'follow',
+      body: JSON.stringify({ action: 'createOrder', token }),
+    })
+
+    let payload = null
+    try {
+      payload = await response.json()
+    } catch {
+      payload = null
+    }
+
+    if (!response.ok || !payload || payload.ok === false) {
+      return {
+        ok: false,
+        error: (payload && payload.error) || 'পেমেন্ট শুরু করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।',
+      }
+    }
+
+    return {
+      ok: true,
+      orderId: payload.orderId,
+      amount: payload.amount,
+      currency: payload.currency,
+      keyId: payload.keyId,
+    }
+  } catch {
+    return {
+      ok: false,
+      error: 'নেটওয়ার্ক সমস্যার কারণে পেমেন্ট শুরু করা যায়নি। ইন্টারনেট সংযোগ দেখে অনুগ্রহ করে আবার চেষ্টা করুন।',
+    }
+  }
+}
+
 export async function submitForm(formType, data, files) {
   try {
     const endpoint = import.meta.env.VITE_FORMS_ENDPOINT

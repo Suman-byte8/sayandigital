@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { DOCUMENTS_SECTION } from '../../data/content.js'
-import PhotoUpload from './PhotoUpload.jsx'
 
 const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
 
@@ -40,7 +39,7 @@ function UploadRow({ doc, onFile }) {
   )
 }
 
-export default function DocumentsSection({ onDocFile, onPhotosChange }) {
+export default function DocumentsSection({ onDocFile }) {
   const s = DOCUMENTS_SECTION
   return (
     <div id="documents" className="p-[42px] border-b border-[#eee5de] max-[560px]:px-[18px] max-[560px]:py-[27px]">
@@ -59,8 +58,6 @@ export default function DocumentsSection({ onDocFile, onPhotosChange }) {
           <UploadRow key={doc.id} doc={doc} onFile={(file) => onDocFile(doc.id, file)} />
         ))}
       </div>
-
-      <PhotoUpload onChange={onPhotosChange} />
     </div>
   )
 }
