@@ -3,7 +3,7 @@ import { AWARDS_SECTION } from '../../data/content.js'
 export default function AwardsSection({ selected, error, onToggle }) {
   const s = AWARDS_SECTION
   return (
-    <div className="p-[42px] border-b border-[#eee5de] max-[560px]:px-[18px] max-[560px]:py-[27px]">
+    <div id="awards-section" className="p-[42px] border-b border-[#eee5de] max-[560px]:px-[18px] max-[560px]:py-[27px]">
       <div className="flex gap-4 items-start mb-7">
         <span className="font-serif font-bold text-[28px] text-[#a03a47]">{s.num}</span>
         <div>

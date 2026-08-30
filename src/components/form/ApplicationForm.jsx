@@ -38,10 +38,16 @@ export default function ApplicationForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!form.validate()) {
-      // Scroll to the first field with an error
-      const firstError = document.querySelector('.border-\\[\\#bd4a52\\]')
-      firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    const { ok, firstErrorField } = form.validate()
+    if (!ok) {
+      // Scroll straight to the exact field that failed — by name, not a
+      // brittle Tailwind error-border class — falling back to the awards
+      // section when the only problem is "no award category selected".
+      const target = firstErrorField
+        ? document.querySelector(`[name="${firstErrorField}"]`)
+        : document.getElementById('awards-section')
+      target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      target?.focus?.({ preventScroll: true })
       return
     }
     setSubmitError('')

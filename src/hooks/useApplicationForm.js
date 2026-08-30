@@ -5,11 +5,13 @@ import {
   PUJA_SECTION,
 } from '../data/content.js'
 
-// Collect the list of required field names from the config-driven sections
-const REQUIRED_FIELDS = [COMMITTEE_SECTION, APPLICANT_SECTION, PUJA_SECTION]
-  .flatMap((s) => s.fields)
-  .filter((f) => f.required)
-  .map((f) => f.name)
+// Flattened field config from every section, in document order — reused
+// both to derive required fields and to drive type-based validation.
+const ALL_FIELDS = [COMMITTEE_SECTION, APPLICANT_SECTION, PUJA_SECTION].flatMap(
+  (s) => s.fields
+)
+
+const REQUIRED_FIELDS = ALL_FIELDS.filter((f) => f.required).map((f) => f.name)
 
 const TOTAL_REQUIRED = REQUIRED_FIELDS.length
 
@@ -18,12 +20,19 @@ const INITIAL = { pujaYear: '২০২৬' }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+// 10-digit Indian mobile number, optionally starting with spaces
+const PHONE_RE = /^[6-9]\d{9}$/
+const PHONE_FIELDS = new Set(['mobile', 'whatsapp', 'alternate'])
+
 // Bengali validation messages shown under each field by Field.jsx
 const MESSAGES = {
   required: 'এই ঘরটি পূরণ করুন।',
   mobile: 'সঠিক ১০ সংখ্যার মোবাইল নম্বর লিখুন (৬–৯ দিয়ে শুরু)।',
   pin: 'সঠিক ৬ সংখ্যার পিন কোড লিখুন।',
   email: 'সঠিক ইমেল ঠিকানা লিখুন।',
+  number: 'সঠিক সংখ্যা লিখুন।',
+  date: 'সঠিক তারিখ নির্বাচন করুন।',
+  dateRange: 'শেষের তারিখ শুরুর তারিখের আগে হতে পারে না।',
 }
 
 export function useApplicationForm() {
@@ -58,30 +67,63 @@ export function useApplicationForm() {
     return { pct, stepIndex, done, total: TOTAL_REQUIRED }
   }, [values])
 
+  // Validates every field against the type/shape declared in content.js —
+  // the form is noValidate, so the browser never enforces this for us.
+  // Format checks only run once a value is present so optional fields
+  // (e.g. alternate contact) don't block submission when left blank.
   const validate = () => {
     const nextErrors = {}
+
     REQUIRED_FIELDS.forEach((name) => {
       if (!String(values[name] || '').trim()) nextErrors[name] = MESSAGES.required
     })
 
-    // Mobile: Indian 10-digit starting 6-9
-    const mobile = String(values.mobile || '').replace(/\s+/g, '')
-    if (mobile && !/^[6-9]\d{9}$/.test(mobile)) nextErrors.mobile = MESSAGES.mobile
+    ALL_FIELDS.forEach((field) => {
+      if (nextErrors[field.name]) return // already failed the required check
 
-    // PIN: 6 digits
-    const pin = String(values.pin || '').trim()
-    if (pin && !/^\d{6}$/.test(pin)) nextErrors.pin = MESSAGES.pin
+      const value = String(values[field.name] || '').trim()
+      if (!value) return
 
-    // Email shape — the form is noValidate, so the browser never checks
-    // the type="email" field for us
-    const email = String(values.email || '').trim()
-    if (email && !EMAIL_RE.test(email)) nextErrors.email = MESSAGES.email
+      if (field.type === 'number') {
+        const num = Number(value)
+        if (Number.isNaN(num)) {
+          nextErrors[field.name] = MESSAGES.number
+        } else if (field.min != null && num < field.min) {
+          nextErrors[field.name] = `মান কমপক্ষে ${field.min} হতে হবে।`
+        } else if (field.max != null && num > field.max) {
+          nextErrors[field.name] = `মান সর্বোচ্চ ${field.max} হতে পারে।`
+        }
+      } else if (field.type === 'date') {
+        if (Number.isNaN(Date.parse(value))) nextErrors[field.name] = MESSAGES.date
+      } else if (field.type === 'email') {
+        if (!EMAIL_RE.test(value)) nextErrors[field.name] = MESSAGES.email
+      } else if (field.name === 'pin') {
+        if (!/^\d{6}$/.test(value)) nextErrors[field.name] = MESSAGES.pin
+      } else if (PHONE_FIELDS.has(field.name)) {
+        if (!PHONE_RE.test(value.replace(/\s+/g, ''))) nextErrors[field.name] = MESSAGES.mobile
+      }
+    })
+
+    // Puja can't end before it starts
+    if (
+      values.startDate &&
+      values.endDate &&
+      !nextErrors.startDate &&
+      !nextErrors.endDate &&
+      new Date(values.endDate) < new Date(values.startDate)
+    ) {
+      nextErrors.endDate = MESSAGES.dateRange
+    }
 
     const validAwards = awards.length > 0
     setAwardsError(validAwards ? '' : 'কমপক্ষে একটি সম্মান বিভাগ নির্বাচন করুন।')
 
     setErrors(nextErrors)
-    return Object.keys(nextErrors).length === 0 && validAwards
+
+    // First invalid field in document order, so the caller can scroll to it.
+    const firstErrorField = ALL_FIELDS.find((f) => nextErrors[f.name])?.name || null
+
+    return { ok: Object.keys(nextErrors).length === 0 && validAwards, firstErrorField }
   }
 
   const getValue = (name) => (values[name] ? values[name] : '—')

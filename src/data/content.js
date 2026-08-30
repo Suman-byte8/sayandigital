@@ -116,8 +116,8 @@ export const COMMITTEE_SECTION = {
       label: "পূজার বয়স",
       required: true,
       type: "number",
-      min: 1800,
-      max: 2026,
+      min: 1,
+      max: 150,
       placeholder: "যেমন: ৫২ তম",
     },
     {
