@@ -31,6 +31,11 @@ export default {
     primaryCta: "আবেদন শুরু করুন",
     ghostCta: "আবেদনের প্রক্রিয়া দেখুন",
     trust: ["✓ অনলাইন আবেদন", "✓ সহজ প্রক্রিয়া", "✓ তথ্য যাচাই"],
+    credit: {
+      kicker: "ওয়েবসাইট তৈরি হয় এখানে",
+    },
+    marquee: "Sayan Digital উপস্থাপনা — পৃষ্ঠপোষকতায় Srowth ও Maa Jewellers",
+    sponsorsLabel: "আমাদের পৃষ্ঠপোষক",
   },
 
   stats: [

@@ -30,6 +30,11 @@ export default {
     primaryCta: "Start Application",
     ghostCta: "See How It Works",
     trust: ["✓ Online Application", "✓ Simple Process", "✓ Verified Details"],
+    credit: {
+      kicker: "Websites made here",
+    },
+    marquee: "Sayan Digital Presents — Sponsored by Srowth & Maa Jewellers",
+    sponsorsLabel: "Our Sponsors",
   },
 
   stats: [

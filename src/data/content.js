@@ -5,6 +5,9 @@
 //  external links) that components pull directly.
 // ============================================================
 
+import srowthLogo from "../assets/sponsors_logo/srowth_logo.png";
+import maaJewelersLogo from "../assets/sponsors_logo/maa_jewelery_logo.png";
+
 // Every image under src/assets/images/<year>/<n>.jpg is bundled and
 // grouped by year automatically — add/remove files there and this
 // updates on the next build, no manual edits needed here.
@@ -35,6 +38,14 @@ function buildGalleryData() {
 export const GALLERY_DATA = buildGalleryData();
 
 export const DEVELOPER_PORTFOLIO_URL = "https://sumancodes.netlify.app";
+export const DEVELOPER_PORTFOLIO_LABEL = "sumancodes.netlify.app";
+export const DEVELOPER_PHONE_DISPLAY = "+91 77976 07126";
+export const DEVELOPER_PHONE_TEL = "+917797607126";
+
+export const SPONSOR_LOGOS = [
+  { src: srowthLogo, alt: "Srowth Packaged Drinking Water" },
+  { src: maaJewelersLogo, alt: "Maa Jewellers" },
+];
 
 // Set to true to accept real submissions. While false, the application
 // form renders as a preview only — every field/checkbox/upload/submit
