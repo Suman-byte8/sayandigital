@@ -1,3 +1,4 @@
+import { ReactLenis } from "lenis/react";
 import { I18nProvider } from "./i18n/I18nContext.jsx";
 import Header from "./components/layout/Header.jsx";
 import Footer from "./components/layout/Footer.jsx";
@@ -10,17 +11,19 @@ import Gallery from "./components/sections/Gallery.jsx";
 
 export default function App() {
   return (
-    <I18nProvider>
-      <Header />
-      <main>
-        <Hero />
-        <Gallery year={2024} />
-        <StatsStrip />
-        <ProcessSection />
-        <NoticeSection />
-        <ApplicationSection />
-      </main>
-      <Footer />
-    </I18nProvider>
+    <ReactLenis root options={{ lerp: 0.1, duration: 1.2, anchors: true }}>
+      <I18nProvider>
+        <Header />
+        <main>
+          <Hero />
+          <Gallery year={2024} />
+          <StatsStrip />
+          <ProcessSection />
+          <NoticeSection />
+          <ApplicationSection />
+        </main>
+        <Footer />
+      </I18nProvider>
+    </ReactLenis>
   );
 }
