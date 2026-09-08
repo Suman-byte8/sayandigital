@@ -5,8 +5,8 @@
 //  external links) that components pull directly.
 // ============================================================
 
-import srowthLogo from "../assets/sponsors_logo/srowth_logo.png";
-import maaJewelersLogo from "../assets/sponsors_logo/maa_jewelery_logo.png";
+import srowthLogo from "../assets/sponsors_logo/srowth.jpg";
+import maaJewelersLogo from "../assets/sponsors_logo/maa_jewellers.jpg";
 
 // Every image under src/assets/images/<year>/<n>.jpg is bundled and
 // grouped by year automatically — add/remove files there and this

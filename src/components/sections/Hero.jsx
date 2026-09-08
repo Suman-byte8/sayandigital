@@ -209,7 +209,7 @@ export default function Hero() {
           />
 
           {/* Logo-only banner */}
-          <div className="relative z-[2] w-full max-w-[470px] overflow-hidden rounded-[30px] border border-[#ead7b1] bg-[#fffdf8] p-3 shadow-[0_30px_80px_rgba(0,0,0,0.38)]">
+          <div className="relative z-[2] w-full max-w-[510px] overflow-hidden rounded-[30px] border border-[#ead7b1] bg-[#fffdf8] p-3 shadow-[0_30px_80px_rgba(0,0,0,0.38)]">
             <div
               className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#d2a956] to-transparent"
               aria-hidden="true"
@@ -223,13 +223,13 @@ export default function Hero() {
               <span className="h-px w-8 bg-[#c99c4d]" aria-hidden="true" />
             </div>
 
-            <div className="flex min-h-[250px] flex-wrap items-center justify-center gap-6 rounded-[22px] px-8 pb-9 pt-5 max-[560px]:min-h-[180px] max-[560px]:gap-4 max-[560px]:px-5 max-[560px]:pb-6 max-[560px]:pt-4">
+            <div className="flex min-h-[280px] flex-wrap items-center justify-center gap-8 rounded-[22px] px-8 pb-9 pt-5 max-[560px]:min-h-[210px] max-[560px]:gap-5 max-[560px]:px-5 max-[560px]:pb-6 max-[560px]:pt-4">
               {SPONSOR_LOGOS.map((logo) => (
                 <img
                   key={logo.alt}
                   src={logo.src}
                   alt={logo.alt}
-                  className="h-[92px] max-w-[180px] object-contain max-[560px]:h-[68px] max-[560px]:max-w-[135px]"
+                  className="h-[175px] max-w-[480px] object-contain max-[560px]:h-[180px] max-[560px]:max-w-[400px]"
                 />
               ))}
             </div>
