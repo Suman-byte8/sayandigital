@@ -33,7 +33,7 @@ export default {
     credit: {
       kicker: "Websites made here",
     },
-    marquee: "Sayan Digital Presents — Sponsored by Srowth & Maa Jewellers",
+    marquee: "Online applications open from Monday, 14th September 2026.",
     sponsorsLabel: "Our Sponsors",
   },
 

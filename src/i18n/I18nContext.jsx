@@ -4,7 +4,7 @@ import bn from './translations/bn.js'
 
 const translations = { en, bn }
 const STORAGE_KEY = 'appLanguage'
-const DEFAULT_LANG = 'en'
+const DEFAULT_LANG = 'bn'
 
 const I18nContext = createContext(null)
 
@@ -37,8 +37,8 @@ export function I18nProvider({ children }) {
 }
 
 // Returns { lang, setLang, t } — `t` is the full translation bundle for the
-// currently selected language (default English; the user must explicitly
-// switch to Bengali, this never reads the browser's language).
+// currently selected language (default Bengali; the user must explicitly
+// switch to English, this never reads the browser's language).
 export function useTranslation() {
   const ctx = useContext(I18nContext)
   if (!ctx) {

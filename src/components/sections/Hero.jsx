@@ -19,11 +19,11 @@ const renderMarqueeUnit = (marqueeText, key) => (
         key={index}
         className="flex shrink-0 items-center gap-4 pr-4 max-[560px]:gap-3 max-[560px]:pr-3"
       >
-        <span className="whitespace-nowrap font-serif text-[14px] font-bold tracking-[0.6px] text-[#6b2f36] max-[560px]:text-[12px]">
+        <span className="whitespace-nowrap font-serif text-[24px] font-bold tracking-[0.6px] text-[#6b2f36] max-[560px]:text-[15px]">
           {marqueeText}
         </span>
 
-        <span className="text-[12px] text-[#c9a262]" aria-hidden="true">
+        <span className="text-[24px] text-[#c9a262]" aria-hidden="true">
           ✦
         </span>
       </span>
@@ -148,7 +148,7 @@ export default function Hero() {
               <span className="text-[12px] text-[#e8c77f]" aria-hidden="true">
                 ✦
               </span>
-              <span className="text-[12px] font-bold uppercase tracking-[2.5px] text-[#f0d9a3]">
+              <span className="font-serif text-[13px] font-bold tracking-[0.5px] text-[#f0d9a3]">
                 {HERO.credit.kicker}
               </span>
             </div>
@@ -249,7 +249,7 @@ export default function Hero() {
                 <span className="h-px w-6 bg-[#d9b56a80]" />
               </div>
 
-              <span className="font-display text-[28px] italic leading-[1.15] tracking-[0.3px] text-[#f3dfae] max-[560px]:text-[23px] [text-shadow:0_2px_18px_rgba(0,0,0,0.5)]">
+              <span className="font-serif text-[24px] font-bold leading-[1.25] tracking-[0.3px] text-[#f3dfae] max-[560px]:text-[19px] [text-shadow:0_2px_18px_rgba(0,0,0,0.5)]">
                 {HERO.credit.kicker}
               </span>
 

@@ -16,7 +16,7 @@ export default function App() {
         <Header />
         <main>
           <Hero />
-          <Gallery year={2024} />
+          <Gallery year={2025} />
           <StatsStrip />
           <ProcessSection />
           <NoticeSection />
