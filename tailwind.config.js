@@ -9,6 +9,7 @@ export default {
       fontFamily: {
         sans: ['"Noto Sans Bengali"', 'sans-serif'],
         serif: ['"Noto Serif Bengali"', 'serif'],
+        display: ['"Playfair Display"', 'serif'],
       },
     },
   },

@@ -208,36 +208,74 @@ export default function Hero() {
             aria-hidden="true"
           />
 
-          {/* Logo-only banner */}
-          <div className="relative z-[2] w-full max-w-[510px] overflow-hidden rounded-[30px] border border-[#ead7b1] bg-[#fffdf8] p-3 shadow-[0_30px_80px_rgba(0,0,0,0.38)]">
-            <div
-              className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#d2a956] to-transparent"
-              aria-hidden="true"
-            />
+          {/* Logo-only banner + website promo */}
+          <div className="relative z-[2] flex w-full flex-col items-center gap-5">
+            <div className="relative w-full max-w-[510px] overflow-hidden rounded-[30px] border border-[#ead7b1] bg-[#fffdf8] p-3 shadow-[0_30px_80px_rgba(0,0,0,0.38)]">
+              <div
+                className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#d2a956] to-transparent"
+                aria-hidden="true"
+              />
 
-            <div className="flex items-center justify-center gap-3 pt-4">
-              <span className="h-px w-8 bg-[#c99c4d]" aria-hidden="true" />
-              <span className="text-[11px] font-bold uppercase tracking-[2.5px] text-[#9b3642]">
-                {HERO.sponsorsLabel}
+              <div className="flex items-center justify-center gap-3 pt-4">
+                <span className="h-px w-8 bg-[#c99c4d]" aria-hidden="true" />
+                <span className="text-[11px] font-bold uppercase tracking-[2.5px] text-[#9b3642]">
+                  {HERO.sponsorsLabel}
+                </span>
+                <span className="h-px w-8 bg-[#c99c4d]" aria-hidden="true" />
+              </div>
+
+              <div className="flex min-h-[280px] flex-wrap items-center justify-center gap-8 rounded-[22px] px-8 pb-9 pt-5 max-[560px]:min-h-[210px] max-[560px]:gap-5 max-[560px]:px-5 max-[560px]:pb-6 max-[560px]:pt-4">
+                {SPONSOR_LOGOS.map((logo) => (
+                  <img
+                    key={logo.alt}
+                    src={logo.src}
+                    alt={logo.alt}
+                    className="h-[175px] max-w-[480px] object-contain max-[560px]:h-[180px] max-[560px]:max-w-[400px]"
+                  />
+                ))}
+              </div>
+
+              <div
+                className="absolute bottom-0 left-1/2 h-[3px] w-24 -translate-x-1/2 rounded-t-full bg-[#c99c4d]"
+                aria-hidden="true"
+              />
+            </div>
+
+            {/* Website promo — premium tagline */}
+            <div className="flex flex-col items-center gap-2.5 text-center">
+              <div className="flex items-center gap-3" aria-hidden="true">
+                <span className="h-px w-6 bg-[#d9b56a80]" />
+                <span className="text-[10px] text-[#e8c77f]">✦</span>
+                <span className="h-px w-6 bg-[#d9b56a80]" />
+              </div>
+
+              <span className="font-display text-[28px] italic leading-[1.15] tracking-[0.3px] text-[#f3dfae] max-[560px]:text-[23px] [text-shadow:0_2px_18px_rgba(0,0,0,0.5)]">
+                {HERO.credit.kicker}
               </span>
-              <span className="h-px w-8 bg-[#c99c4d]" aria-hidden="true" />
-            </div>
 
-            <div className="flex min-h-[280px] flex-wrap items-center justify-center gap-8 rounded-[22px] px-8 pb-9 pt-5 max-[560px]:min-h-[210px] max-[560px]:gap-5 max-[560px]:px-5 max-[560px]:pb-6 max-[560px]:pt-4">
-              {SPONSOR_LOGOS.map((logo) => (
-                <img
-                  key={logo.alt}
-                  src={logo.src}
-                  alt={logo.alt}
-                  className="h-[175px] max-w-[480px] object-contain max-[560px]:h-[180px] max-[560px]:max-w-[400px]"
+              <div className="mt-1 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[14px] font-semibold tracking-[0.2px] text-[#fff8ec]">
+                <a
+                  href={`tel:${DEVELOPER_PHONE_TEL}`}
+                  className="transition-colors hover:text-[#f0d9a3]"
+                >
+                  {DEVELOPER_PHONE_DISPLAY}
+                </a>
+
+                <span
+                  className="h-3 w-px bg-[#d9b56a55]"
+                  aria-hidden="true"
                 />
-              ))}
-            </div>
 
-            <div
-              className="absolute bottom-0 left-1/2 h-[3px] w-24 -translate-x-1/2 rounded-t-full bg-[#c99c4d]"
-              aria-hidden="true"
-            />
+                <a
+                  href={DEVELOPER_PORTFOLIO_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-[#d9b56a70] underline-offset-4 transition-colors hover:text-[#f0d9a3]"
+                >
+                  {DEVELOPER_PORTFOLIO_LABEL}
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
