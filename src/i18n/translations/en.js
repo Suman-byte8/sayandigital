@@ -238,6 +238,8 @@ export default {
         "This is a preview of the application form. Submissions will open soon — please check back later.",
       textWithDate: (date) =>
         `This is a preview of the application form. Submissions open on ${date}.`,
+      dateNotice:
+        "Online applications open from Monday, 14th September 2026.",
     },
 
     documents: {

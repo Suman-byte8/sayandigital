@@ -4,7 +4,7 @@ import { useApplicationForm } from '../../hooks/useApplicationForm.js'
 import { printAcknowledgement } from '../../utils/helpers.js'
 import { submitForm, createPaymentOrder, reportPaymentFailure } from '../../lib/forms.js'
 import { loadRazorpayScript, openRazorpayCheckout } from '../../lib/razorpay.js'
-import { APPLICATIONS_OPEN, APPLICATIONS_OPEN_DATE } from '../../data/content.js'
+import { APPLICATIONS_OPEN } from '../../data/content.js'
 
 import ProgressBar from './ProgressBar.jsx'
 import FormSection from './FormSection.jsx'
@@ -233,11 +233,8 @@ export default function ApplicationForm() {
             !
           </div>
           <div>
-            <strong className="text-lg text-[#7a1f2b] block">{t.ui.previewBanner.title}</strong>
-            <p className="mt-1 text-sm font-medium text-[#8e303b]">
-              {APPLICATIONS_OPEN_DATE
-                ? t.ui.previewBanner.textWithDate(APPLICATIONS_OPEN_DATE)
-                : t.ui.previewBanner.textNoDate}
+            <p className="font-serif text-2xl font-bold leading-snug text-[#7a1f2b]">
+              {t.ui.previewBanner.dateNotice}
             </p>
           </div>
         </div>
